@@ -4,9 +4,16 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './config/typeorm.config';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(typeOrmConfig), UserModule],
+  imports: [
+    ConfigModule.forRoot({
+      envFilePath: './.env',
+    }),
+    TypeOrmModule.forRoot(typeOrmConfig),
+    UserModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -1,7 +1,11 @@
 # compiled output
 /dist
 /node_modules
+# env파일
+.env
 
+# 설정 파일
+/config/*
 # Logs
 logs
 *.log
