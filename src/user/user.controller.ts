@@ -10,8 +10,10 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { EmailService } from 'src/email/email.service';
 import { User } from 'src/model/user.entity';
 import { GetUser } from './decorator/get-user.decorator';
+import { EmailDto } from './dto/emaildto';
 import { UserSignInAuthDto } from './dto/user.auth.signindto';
 import { UserAuthDto } from './dto/user.authdto';
 import { UserFindId } from './dto/user.findIddto';
@@ -19,7 +21,10 @@ import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private emailService: EmailService,
+  ) {}
   // 회원가입 api
   @Post('/signup')
   signUp(@Body(ValidationPipe) userAuthDto: UserAuthDto): Promise<void> {
@@ -34,7 +39,7 @@ export class UserController {
   }
 
   @Post('/findid')
-  async findId(@Body() userFindId: UserFindId, user: User) {
+  async findId(@Body() userFindId: UserFindId) {
     const findedUser = await this.userService.findId(userFindId);
     if (findedUser) {
       console.log(findedUser);
@@ -63,5 +68,10 @@ export class UserController {
   @UseGuards(AuthGuard())
   test1(@GetUser() user: User) {
     console.log('user', user);
+  }
+
+  @Post('/authmail')
+  authmail(@Body() emailDto: EmailDto) {
+    return this.emailService.auther(emailDto);
   }
 }

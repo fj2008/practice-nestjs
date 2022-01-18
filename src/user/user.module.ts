@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { EmailModule } from 'src/email/email.module';
 import { JwtStrtegy } from './auth/jwt.strategy';
 import { UserController } from './user.controller';
 import { UserRepository } from './user.repository';
@@ -18,7 +19,8 @@ import { UserService } from './user.service';
         expiresIn: 60 * 60,
       },
     }),
-    TypeOrmModule.forFeature([UserRepository]), // orm
+    EmailModule,
+    TypeOrmModule.forFeature([UserRepository]), // orm,
   ],
   controllers: [UserController],
   providers: [UserService, JwtStrtegy],
