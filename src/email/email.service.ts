@@ -1,7 +1,8 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { Injectable } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { User } from 'src/model/user.entity';
 import { EmailDto } from 'src/user/dto/emaildto';
+import app from 'express';
 @Injectable()
 export class EmailService {
   constructor(private readonly mailerService: MailerService) {}
@@ -35,15 +36,15 @@ export class EmailService {
     });
   }
 
-  async auther(emailDto: EmailDto) {
-    console.log(emailDto.email);
-    const random = Math.random().toString();
-    const authNum = random.split('.')[1]; // 난수생성
-
-    await this._send([emailDto.email], '이메일 인증 시도', 'auth.ejs', {
-      email: emailDto.email,
-      auth: authNum,
-      datetime: new Date(),
-    });
-  }
+  // async auther(emailDto: EmailDto) {
+  //   const random = Math.random().toString();
+  //   const authNum = random.split('.')[1]; // 난수생성
+  //   console.log('나실행됨?');
+  //   // await this._send([emailDto.email], '이메일 인증 시도', 'auth.ejs', {
+  //   //   email: emailDto.email,
+  //   //   auth: authNum,
+  //   //   datetime: new Date(),
+  //   // });
+  //   return authNum;
+  // }
 }

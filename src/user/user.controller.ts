@@ -2,19 +2,29 @@ import {
   Body,
   Controller,
   Get,
+  Param,
+  Patch,
   Post,
   Redirect,
+  Render,
   Req,
+  Res,
+  Session,
+  StreamableFile,
   UnauthorizedException,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Request, response } from 'express';
+import { createReadStream } from 'fs';
+import { join } from 'path';
 import { EmailService } from 'src/email/email.service';
 import { User } from 'src/model/user.entity';
 import { GetUser } from './decorator/get-user.decorator';
 import { EmailDto } from './dto/emaildto';
 import { UserSignInAuthDto } from './dto/user.auth.signindto';
+import { UpdatePwDto } from './dto/user.auth.updatepwdto';
 import { UserAuthDto } from './dto/user.authdto';
 import { UserFindId } from './dto/user.findIddto';
 import { UserService } from './user.service';
@@ -70,8 +80,43 @@ export class UserController {
     console.log('user', user);
   }
 
-  @Post('/authmail')
-  authmail(@Body() emailDto: EmailDto) {
-    return this.emailService.auther(emailDto);
+  @Post('/auth/mail')
+  async authmail(@Body() emailDto: EmailDto) {
+    return this.userService.cheakEmail(emailDto);
+  }
+
+  //이메일 인증을 한후 비밀번호를 수정버튼을 눌렀을때 들어오는 컨트롤러
+  @Get('/auth/checkAuth')
+  @Render('checkAuthUser')
+  authPage() {
+    return '';
+  }
+  //인증번호 확인을 눌렀을때 발생되는 버튼이벤트 컨트롤러
+  @Post('/auth/authNum')
+  @Redirect('/user/auth/updateView')
+  authNum(@Body() authNum: string) {
+    return this.userService.checkAuthUser(authNum);
+  }
+
+  @Get('/auth/updateView')
+  @Render('authUpdatePw')
+  async updatePwView() {
+    const userId = await this.userService.findUserId();
+
+    return { userId };
+  }
+
+  @Patch('/auth/update/:userId')
+  async updatePw(
+    @Body() updatePwDto: UpdatePwDto,
+    @Param('userId') userId: string,
+  ) {
+    console.log('업데이트 해주세요' + userId);
+    return this.userService.updatePw(updatePwDto, userId);
   }
 }
+
+// const file = createReadStream(
+//   join(process.cwd(), './src/templates/authUpdatePw.ejs'),
+// );
+// return new StreamableFile(file);

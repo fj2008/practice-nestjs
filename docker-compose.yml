@@ -1,0 +1,18 @@
+version: '3.3' # 파일 규격 버전
+services:
+  redis_service:
+    image: redis:6.2.5
+    container_name: redis_service
+    restart: always
+    networks:
+      - host
+    ports:
+      - '6379:6379'
+    expose:
+      - '6379'
+    volumes:
+      - ./config/data:/data
+      - ./config/conf/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+networks:
+  host:

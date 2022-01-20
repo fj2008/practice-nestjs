@@ -1,0 +1,97 @@
+    <h1 class="h3 mb-3 fw-normal">Please updatepw in</h1>
+
+    <div class="form-floating">
+      <input type="password" class="form-control" placeholder="비밀번호" name="password" id="password">
+      <label for="floatingInput">비밀번호</label>
+    </div>
+
+    <div class="form-floating">
+      <input type="password" class="form-control" placeholder="비밀번호확인" name="checkPassword" id="checkPassword">
+      <label for="floatingInput">비밀번호확인</label>
+    </div>
+    <div class="checkbox mb-3">
+      <!-- <label>
+        <input type="checkbox" value="remember-me"> Remember me
+      </label> -->
+      
+      </div>
+    </div>
+    
+    <!-- <a class="w-100 btn btn-lg btn-primary"onclick=`updatePw(<%= locals.userId %>)` style="background-color: #f5f5f5; border:  #f8f9fa; color: #383838;" >비밀번호 수정하기</button> -->
+      <a onclick="updatePw(<%= locals.userId %>)" >비밀번호 수정하기</a>
+      <script  src="http://code.jquery.com/jquery-latest.min.js"></script>
+      <script>
+
+        
+        function updatePw(userId){
+        //  event.preventDefault();//폼태크 액션방지
+          
+        let pw = document.querySelector('#password').value;
+        console.log(pw);
+        let ckpw = document.querySelector('#checkPassword').value;
+        console.log(ckpw);
+          if(pw === ckpw){
+
+            
+            let updateDto = {
+              password : pw
+            }
+            $.ajax({
+              type:"patch",
+              url:`/user/auth/update/`+userId,
+              data:updateDto,
+              contentType:"application/x-www-form-urlencoded; charset=utf-8",
+              dataType:"json"
+            }).done(res=>{//HttpStatue 상태코드 200번대
+              console.log("성공",res);
+              //location.href=`/user/${userId}`
+            }).fail(error=>{//HTTPStatus 상태코드 200번대가 아닐때
+              console.log("실패",error);
+             // if(error.data == null){
+               // alert(error.responseJSON.message);
+              //}else{
+              //  alert(JSON.stringify(error.responseJSON.data.name));
+              //}
+              
+            });
+            }
+        }
+      </script>
+
+<!-- 
+  <script>
+    async function updatePw(id) {
+      console.log('자바스크립트 실행');
+  
+    let pw = document.querySelector('#password').value;
+    console.log(pw);
+    let ckpw = document.querySelector('#checkPassword').value;
+    console.log(ckpw);
+    console.log(id);
+      if(pw === ckpw){
+
+        let updateDto = {
+          id :id,
+          password : pw
+        };
+        let response = await fetch('/user/auth/update/'+id, {
+          method: 'patch',
+          body: JSON.stringify(updateDto),
+          headers: {
+            "Content-Type":"application/json; charset=utf-8"
+          },
+        });
+    
+        let parseResponse = await response.text();
+        console.log(parseResponse);
+    
+        if (parseResponse === 'ok') {
+          alert('회원정보 수정이 완료 됐습니다.');
+         // location.href = '/user/myPage';
+        }
+      }else{
+        alert('비밀번호가 일치하지 않습니다.');
+      }
+
+    }
+  </script> -->

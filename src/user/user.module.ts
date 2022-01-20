@@ -1,8 +1,10 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, forwardRef, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { RedisModule } from 'nestjs-ioredis';
+
 import { EmailModule } from 'src/email/email.module';
 import { JwtStrtegy } from './auth/jwt.strategy';
 import { UserController } from './user.controller';
@@ -11,6 +13,7 @@ import { UserService } from './user.service';
 
 @Module({
   imports: [
+    CacheModule.register(),
     ConfigModule.forRoot(),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
@@ -19,8 +22,15 @@ import { UserService } from './user.service';
         expiresIn: 60 * 60,
       },
     }),
-    EmailModule,
+    forwardRef(() => EmailModule),
     TypeOrmModule.forFeature([UserRepository]), // orm,
+    RedisModule.forRoot([
+      {
+        host: '127.0.0.1',
+        port: 6379,
+        password: 'fj4951826',
+      },
+    ]),
   ],
   controllers: [UserController],
   providers: [UserService, JwtStrtegy],

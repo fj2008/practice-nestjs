@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './config/typeorm.config';
@@ -17,7 +17,7 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
     }),
     TypeOrmModule.forRoot(typeOrmConfig),
     UserModule,
-    EmailModule,
+    forwardRef(() => EmailModule),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -37,7 +37,7 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
       },
     }),
   ],
-  providers: [EmailService],
+  providers: [EmailService, EjsAdapter],
   controllers: [],
 })
 export class AppModule {}
