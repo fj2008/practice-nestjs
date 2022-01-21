@@ -22,11 +22,12 @@ import { UpdatePwDto } from './dto/user.auth.updatepwdto';
 import { Cache } from 'cache-manager';
 import { createReadStream } from 'fs';
 import { join } from 'path';
+import { getConnection, getManager } from 'typeorm';
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserRepository)
-    private userRepository: UserRepository,
+    private readonly userRepository: UserRepository,
     private jwtService: JwtService,
     @InjectRedisClient('0')
     private cache: Redis.Redis,
@@ -35,7 +36,16 @@ export class UserService {
   ) {}
 
   async signUp(userAuthDto: UserAuthDto): Promise<void> {
-    return this.userRepository.createUser(userAuthDto);
+    const queryRunner = await getConnection().createQueryRunner();
+    await queryRunner.startTransaction();
+    try {
+      await this.userRepository.createUser(queryRunner.manager, userAuthDto);
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
+    return;
   }
 
   async signIn(
