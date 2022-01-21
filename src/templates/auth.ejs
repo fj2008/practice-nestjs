@@ -1,6 +1,8 @@
 <div>
   <h2>수신이메일:<%= locals.email%></h2>
-  <h1>인증번호:<%= locals.auth %></h1>
-  <a href="http://localhost:3000/user/auth/checkAuth">비밀번호 수정하기</a>
+  <h1>인증 되셨습니다. 비밀번호 수정을 위해서 아래 링크로 들어가 주세요</h1>
+  <a href="http://localhost:3000/user/auth/<%= locals.auth %>"
+    >비밀번호 수정하기</a
+  >
   <h2><%= locals.datetime%></h2>
 </div>

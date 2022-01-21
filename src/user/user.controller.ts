@@ -79,24 +79,25 @@ export class UserController {
   test1(@GetUser() user: User) {
     console.log('user', user);
   }
-
+  //db에 등록된이메일인지 체크후 인증메일 요청
   @Post('/auth/mail')
   async authmail(@Body() emailDto: EmailDto) {
     return this.userService.cheakEmail(emailDto);
   }
 
   //이메일 인증을 한후 비밀번호를 수정버튼을 눌렀을때 들어오는 컨트롤러
-  @Get('/auth/checkAuth')
-  @Render('checkAuthUser')
-  authPage() {
-    return '';
+  @Get('/auth/:checkUser')
+  authPage(@Param('checkUser') checkUser: string) {
+    console.log('파라미터값' + checkUser);
+    return this.userService.cheak(checkUser);
   }
-  //인증번호 확인을 눌렀을때 발생되는 버튼이벤트 컨트롤러
-  @Post('/auth/authNum')
-  @Redirect('/user/auth/updateView')
-  authNum(@Body() authNum: string) {
-    return this.userService.checkAuthUser(authNum);
-  }
+
+  // //인증번호 확인을 눌렀을때 발생되는 버튼이벤트 컨트롤러
+  // @Post('/auth/authNum')
+  // @Redirect('/user/auth/updateView')
+  // authNum(@Body() authNum: string) {
+  //   return this.userService.checkAuthUser(authNum);
+  // }
 
   @Get('/auth/updateView')
   @Render('authUpdatePw')
