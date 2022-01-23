@@ -43,7 +43,7 @@ export class UserService {
   ): Promise<{ accsessToken: string }> {
     const { username, password } = userSignInAuthDto;
     const user = await this.userRepository.findOne({ username });
-    if (user && bcrypt.compare(password, user.password)) {
+    if (user && (await bcrypt.compare(password, user.password))) {
       const payload = { username };
       const accsessToken = await this.jwtService.sign(payload); //토큰생성
       return { accsessToken };
