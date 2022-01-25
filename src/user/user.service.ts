@@ -22,7 +22,7 @@ import { UpdatePwDto } from './dto/user.auth.updatepwdto';
 import { Cache } from 'cache-manager';
 import { createReadStream } from 'fs';
 import { join } from 'path';
-import { getConnection, getManager } from 'typeorm';
+import { Connection, getConnection, getManager } from 'typeorm';
 @Injectable()
 export class UserService {
   constructor(
@@ -33,13 +33,16 @@ export class UserService {
     private cache: Redis.Redis,
     private emailService: EmailService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private connection: Connection,
   ) {}
 
   async signUp(userAuthDto: UserAuthDto): Promise<void> {
-    const queryRunner = await getConnection().createQueryRunner();
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
       await this.userRepository.createUser(queryRunner.manager, userAuthDto);
+      await queryRunner.commitTransaction(); //성공시에
     } catch (err) {
       await queryRunner.rollbackTransaction();
     } finally {
@@ -61,6 +64,11 @@ export class UserService {
       throw new UnauthorizedException('로그인 실패');
     }
   }
+
+  // async logout(user: User) {
+  //   const
+  // }
+
   async findId(userFindId: UserFindId): Promise<User> {
     const { username } = userFindId;
     const user = await this.userRepository.findOne({ username });
@@ -101,23 +109,6 @@ export class UserService {
     }
   }
 
-  // //이메일에서 인증하기 버튼을 눌렀을때
-  // //radis에 저장된 벨류값이랑 전해들어온 파라미터값이랑 비교하는 함수
-  // async checkAuthUser(authUrl: string) {
-  //   const authkey = await this.cache.get('authkey');
-  //   //form데이터로 들어온 인증번호 데이터 파싱(오브젝트로 들어옴)
-  //   const parseObject = JSON.stringify(authUrl).split(':')[1];
-  //   const parseNum = parseObject.split('"')[1];
-  //   console.log(parseNum);
-  //   console.log(authkey);
-  //   console.log(authkey === parseNum);
-  //   if (authkey === parseNum) {
-  //     return '인가된 사용자 ';
-  //   } else {
-  //     throw new UnauthorizedException('맞지않은 인증번호');
-  //   }
-  // }
-
   //비밀번호 수정을 요청한 사용자에게 캐싱된 해당 사용자의 아이디 던지기
   async findUserId() {
     return await this.cache.get('userId');
@@ -152,5 +143,9 @@ export class UserService {
     } else {
       throw new UnauthorizedException('인증되지 않은 사용자');
     }
+  }
+
+  deleteUser(userId: string) {
+    this.userRepository.delete(userId);
   }
 }

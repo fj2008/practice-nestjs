@@ -9,6 +9,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import * as path from 'path';
 import configEmail from './config/email';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
+import { BoardModule } from './board/board.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -36,6 +37,7 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
         };
       },
     }),
+    BoardModule,
   ],
   providers: [EmailService, EjsAdapter],
   controllers: [],

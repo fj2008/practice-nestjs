@@ -6,7 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisModule } from 'nestjs-ioredis';
 
 import { EmailModule } from 'src/email/email.module';
-import { JwtStrtegy } from './auth/jwt.strategy';
+import { JwtStrtegy } from './auth/config/jwt.strategy';
 import { UserController } from './user.controller';
 import { UserRepository } from './user.repository';
 import { UserService } from './user.service';
@@ -26,9 +26,9 @@ import { UserService } from './user.service';
     TypeOrmModule.forFeature([UserRepository]), // orm,
     RedisModule.forRoot([
       {
-        host: '127.0.0.1',
+        host: process.env.REDIS_HOST,
         port: 6379,
-        password: 'fj4951826',
+        password: process.env.REDIS_PW,
       },
     ]),
   ],

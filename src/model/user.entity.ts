@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
+import { Board } from './board.entity';
 
 @Entity()
 @Unique(['username'])
@@ -15,4 +22,8 @@ export class User {
   email: string;
   @Column()
   gender: string;
+  @Column({ type: 'timestamp' })
+  date_time: Date;
+  @OneToMany((type) => Board, (board) => board.user, { eager: true })
+  boards: Board[];
 }

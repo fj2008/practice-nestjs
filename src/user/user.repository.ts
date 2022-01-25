@@ -26,11 +26,13 @@ export class UserRepository extends Repository<User> {
       gender,
       email,
     });
-    try {
-      await transactionManager.save(user);
-      console.log('저장완료');
-    } catch (error) {
-      console.log(error);
+    if (user) {
+      try {
+        await transactionManager.save(user);
+        console.log('저장완료');
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 }
