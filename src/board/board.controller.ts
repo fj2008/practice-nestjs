@@ -10,11 +10,12 @@ import { WritingBoardDto } from './dto/writing.board.dto';
 export class BoardController {
   constructor(private boardService: BoardService) {}
 
+  //글쓰기 api
   @Post('/writing')
   writingBoard(
     @Body() writingBoardDto: WritingBoardDto,
     @GetUser() user: User,
-  ) {
+  ): Promise<void> {
     return this.boardService.createBoard(writingBoardDto, user);
   }
 }

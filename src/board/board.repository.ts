@@ -1,12 +1,23 @@
 import { Board } from 'src/model/board.entity';
 import { User } from 'src/model/user.entity';
-import { EntityRepository, Repository } from 'typeorm';
+import {
+  EntityManager,
+  EntityRepository,
+  Repository,
+  Transaction,
+  TransactionManager,
+} from 'typeorm';
 import { WritingBoardDto } from './dto/writing.board.dto';
 import { BoardStatus } from './enum/board.status.enum';
 
 @EntityRepository(Board)
 export class BoardRepository extends Repository<Board> {
-  async createBoard(writingBoardDto: WritingBoardDto, user: User) {
+  @Transaction()
+  async createBoard(
+    @TransactionManager() transactionManager: EntityManager,
+    writingBoardDto: WritingBoardDto,
+    user: User,
+  ): Promise<void> {
     const { title, description } = writingBoardDto;
     const board = this.create({
       title,
@@ -14,6 +25,8 @@ export class BoardRepository extends Repository<Board> {
       status: BoardStatus.PUBLIC,
       user: user,
     });
-    await this.save(board);
+    if (board) {
+      await transactionManager.save(board);
+    }
   }
 }
