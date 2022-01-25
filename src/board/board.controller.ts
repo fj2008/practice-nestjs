@@ -1,4 +1,12 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/model/user.entity';
 import { GetUser } from 'src/user/decorator/get-user.decorator';
@@ -13,9 +21,18 @@ export class BoardController {
   //글쓰기 api
   @Post('/writing')
   writingBoard(
-    @Body() writingBoardDto: WritingBoardDto,
+    @Body(ValidationPipe) writingBoardDto: WritingBoardDto,
     @GetUser() user: User,
   ): Promise<void> {
     return this.boardService.createBoard(writingBoardDto, user);
+  }
+
+  //글 수정하기 api
+  @Patch('/update/description/:boardId')
+  updateDescription(
+    @Param('boardId') boardId: string,
+    @Body(ValidationPipe) writingBoardDto: WritingBoardDto,
+  ): Promise<void> {
+    return this.boardService.updateBoard(boardId, writingBoardDto);
   }
 }

@@ -48,7 +48,6 @@ export class UserService {
     } finally {
       await queryRunner.release();
     }
-    return;
   }
 
   async signIn(

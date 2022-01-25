@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Board } from 'src/model/board.entity';
 import { User } from 'src/model/user.entity';
 import { Connection } from 'typeorm';
 import { BoardRepository } from './board.repository';
@@ -13,6 +14,7 @@ export class BoardService {
     private connection: Connection,
   ) {}
 
+  //글쓰기 서비스
   async createBoard(
     writingBoardDto: WritingBoardDto,
     user: User,
@@ -25,5 +27,25 @@ export class BoardService {
       writingBoardDto,
       user,
     );
+  }
+
+  //하나의 글 수정 서비스
+  async updateBoard(
+    boardId: string,
+    writingBoardDto: WritingBoardDto,
+  ): Promise<void> {
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    const { title, description } = writingBoardDto;
+    const board = await this.boardRepository.findOne(boardId);
+    try {
+      await queryRunner.manager.update(Board, board.id, { title, description });
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
   }
 }
