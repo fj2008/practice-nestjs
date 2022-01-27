@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Param,
   Patch,
   Post,
@@ -34,5 +35,10 @@ export class BoardController {
     @Body(ValidationPipe) writingBoardDto: WritingBoardDto,
   ): Promise<void> {
     return this.boardService.updateBoard(boardId, writingBoardDto);
+  }
+  //글 삭제 하기 api
+  @Delete('/delete/:boardId')
+  deleteBoard(@Param('boardId') boardId: string) {
+    return this.boardService.deleteBoard(boardId);
   }
 }

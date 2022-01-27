@@ -10,6 +10,8 @@ import * as path from 'path';
 import configEmail from './config/email';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { BoardModule } from './board/board.module';
+import { CommentController } from './comment/comment.controller';
+import { CommentModule } from './comment/comment.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -38,8 +40,9 @@ import { BoardModule } from './board/board.module';
       },
     }),
     BoardModule,
+    CommentModule,
   ],
   providers: [EmailService, EjsAdapter],
-  controllers: [],
+  controllers: [CommentController],
 })
 export class AppModule {}

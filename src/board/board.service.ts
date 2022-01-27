@@ -14,7 +14,7 @@ export class BoardService {
     private connection: Connection,
   ) {}
 
-  //글쓰기 서비스
+  //글쓰기api에 대한 서비스
   async createBoard(
     writingBoardDto: WritingBoardDto,
     user: User,
@@ -29,7 +29,7 @@ export class BoardService {
     );
   }
 
-  //하나의 글 수정 서비스
+  //하나의 글 수정api에 대한 서비스
   async updateBoard(
     boardId: string,
     writingBoardDto: WritingBoardDto,
@@ -41,6 +41,22 @@ export class BoardService {
     const board = await this.boardRepository.findOne(boardId);
     try {
       await queryRunner.manager.update(Board, board.id, { title, description });
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  //하나의 글 삭제api에 대한 서비스
+  async deleteBoard(boardId: string) {
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    const board = await this.boardRepository.findOne(boardId);
+    try {
+      await queryRunner.manager.delete(Board, board.id);
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();

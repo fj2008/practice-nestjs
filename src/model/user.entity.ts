@@ -6,6 +6,7 @@ import {
   Unique,
 } from 'typeorm';
 import { Board } from './board.entity';
+import { Comment } from './comment.entity';
 
 @Entity()
 @Unique(['username'])
@@ -24,6 +25,10 @@ export class User {
   gender: string;
   @Column({ type: 'timestamp' })
   date_time: Date;
+
   @OneToMany((type) => Board, (board) => board.user, { eager: true })
   boards: Board[];
+
+  @OneToMany((type) => Comment, (comment) => comment.user, { eager: true })
+  comments: Comment[];
 }
