@@ -2,6 +2,7 @@ import { BoardStatus } from 'src/board/enum/board.status.enum';
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -9,20 +10,21 @@ import {
 import { Comment } from './comment.entity';
 import { User } from './user.entity';
 
-@Entity()
+@Entity('board')
 export class Board {
   @PrimaryGeneratedColumn()
   id: number;
-  @Column()
+  @Column({ nullable: true })
   title: string;
-  @Column()
+  @Column({ nullable: true })
   description: string;
-  @Column()
+  @Column({ nullable: true })
   status: BoardStatus;
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'timestamp', nullable: true })
   date_time: Date;
 
   @ManyToOne(() => User, (user) => user.boards)
+  @JoinColumn({ name: 'userId' })
   user: User;
   @OneToMany(() => Comment, (comment) => comment.board)
   comments: Comment[];

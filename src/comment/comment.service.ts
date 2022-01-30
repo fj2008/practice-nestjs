@@ -22,6 +22,13 @@ export class CommentService {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
+    const boardEntity = this.commentRepository.findOne(boardId);
+    console.log(await boardEntity);
+    const dto = {
+      comment: createCommentDto.comment,
+      user,
+      boardId,
+    };
     await this.commentRepository.createComment(
       queryRunner.manager,
       createCommentDto,

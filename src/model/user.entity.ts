@@ -1,27 +1,20 @@
-import {
-  Column,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  Unique,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Board } from './board.entity';
 import { Comment } from './comment.entity';
 
-@Entity()
-@Unique(['username'])
+@Entity('user')
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: true, unique: true })
   username: string;
 
-  @Column()
+  @Column({ nullable: true })
   password: string;
-  @Column()
+  @Column({ nullable: true })
   email: string;
-  @Column()
+  @Column({ nullable: true })
   gender: string;
   @Column({ type: 'timestamp' })
   date_time: Date;
@@ -29,6 +22,6 @@ export class User {
   @OneToMany(() => Board, (board) => board.user, { eager: true })
   boards: Board[];
 
-  @OneToMany(() => Comment, (comment) => comment.user)
+  @OneToMany(() => Comment, (comment) => comment.user, { eager: true })
   comments: Comment[];
 }

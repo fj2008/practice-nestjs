@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from 'src/model/board.entity';
+import { Comment } from 'src/model/comment.entity';
 import { User } from 'src/model/user.entity';
 import { Connection } from 'typeorm';
 import { BoardRepository } from './board.repository';
@@ -22,10 +23,6 @@ export class BoardService {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    const board = await this.connection
-      .getRepository(User)
-      .createQueryBuilder('user')
-      .getMany();
     await this.boardRepository.createBoard(
       queryRunner.manager,
       writingBoardDto,
