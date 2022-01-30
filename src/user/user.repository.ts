@@ -11,6 +11,7 @@ import { UserAuthDto } from './dto/user.authdto';
 import * as bcrypt from 'bcrypt';
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
+  @Transaction()
   async createUser(
     @TransactionManager() transactionManager: EntityManager, // 트랜잭션관리
     userAuthDto: UserAuthDto,

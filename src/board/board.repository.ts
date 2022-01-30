@@ -19,12 +19,14 @@ export class BoardRepository extends Repository<Board> {
     user: User,
   ): Promise<void> {
     const { title, description } = writingBoardDto;
-    const board = this.create({
+    console.log('title: ' + title);
+    const board = transactionManager.create(Board, {
       title,
       description,
       status: BoardStatus.PUBLIC,
       user: user,
     });
+    console.log(board.user.id);
     if (board) {
       await transactionManager.save(board);
     }

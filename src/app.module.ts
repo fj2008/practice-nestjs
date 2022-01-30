@@ -10,7 +10,6 @@ import * as path from 'path';
 import configEmail from './config/email';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { BoardModule } from './board/board.module';
-import { CommentController } from './comment/comment.controller';
 import { CommentModule } from './comment/comment.module';
 @Module({
   imports: [
@@ -19,7 +18,6 @@ import { CommentModule } from './comment/comment.module';
       load: [configEmail],
     }),
     TypeOrmModule.forRoot(typeOrmConfig),
-    UserModule,
     forwardRef(() => EmailModule),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
@@ -39,10 +37,10 @@ import { CommentModule } from './comment/comment.module';
         };
       },
     }),
+    UserModule,
     BoardModule,
     CommentModule,
   ],
   providers: [EmailService, EjsAdapter],
-  controllers: [CommentController],
 })
 export class AppModule {}

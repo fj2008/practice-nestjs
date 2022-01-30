@@ -13,9 +13,9 @@ export class Comment {
   @Column({ type: 'timestamp' })
   date_time: Date;
 
-  @ManyToOne((type) => User, (user) => user.comments)
+  @ManyToOne(() => User, (user) => user.comments)
   user: User;
 
-  @ManyToOne((type) => Board, (board) => board.comments)
+  @ManyToOne(() => Board, (board) => board.comments)
   board: Board;
 }

@@ -22,8 +22,8 @@ export class Board {
   @Column({ type: 'timestamp' })
   date_time: Date;
 
-  @ManyToOne((type) => User, (user) => user.boards, { eager: false })
+  @ManyToOne(() => User, (user) => user.boards)
   user: User;
-  @OneToMany((type) => Comment, (comment) => comment.board)
+  @OneToMany(() => Comment, (comment) => comment.board)
   comments: Comment[];
 }

@@ -22,11 +22,16 @@ export class BoardService {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
+    const board = await this.connection
+      .getRepository(User)
+      .createQueryBuilder('user')
+      .getMany();
     await this.boardRepository.createBoard(
       queryRunner.manager,
       writingBoardDto,
       user,
     );
+    console.log('testDi' + test);
   }
 
   //하나의 글 수정api에 대한 서비스

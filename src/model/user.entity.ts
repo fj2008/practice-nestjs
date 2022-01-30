@@ -26,9 +26,9 @@ export class User {
   @Column({ type: 'timestamp' })
   date_time: Date;
 
-  @OneToMany((type) => Board, (board) => board.user, { eager: true })
+  @OneToMany(() => Board, (board) => board.user, { eager: true })
   boards: Board[];
 
-  @OneToMany((type) => Comment, (comment) => comment.user, { eager: true })
+  @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
 }
