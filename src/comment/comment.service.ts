@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Board } from 'src/model/board.entity';
 import { Comment } from 'src/model/comment.entity';
 import { User } from 'src/model/user.entity';
-import { Connection } from 'typeorm';
+import { Connection, getConnection } from 'typeorm';
 import { CommentRepository } from './comment.repository';
 import { CreateCommentDto } from './dto/create.comment.dto';
 
@@ -22,18 +23,26 @@ export class CommentService {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    const boardEntity = this.commentRepository.findOne(boardId);
-    console.log(await boardEntity);
-    const dto = {
-      comment: createCommentDto.comment,
+    const boardEntity = await getConnection()
+      .createQueryBuilder()
+      .select('board')
+      .from(Board, 'board')
+      .where('board.id=:id', { id: boardId })
+      .getOne();
+    const comment = await queryRunner.manager.create(Comment, {
+      comments: createCommentDto.comment,
       user,
-      boardId,
-    };
-    await this.commentRepository.createComment(
-      queryRunner.manager,
-      createCommentDto,
-      user,
-      boardId,
-    );
+      board: boardEntity,
+    });
+    console.log(comment.comments);
+
+    if (comment) {
+      await getConnection()
+        .createQueryBuilder()
+        .insert()
+        .into(Comment)
+        .values(comment)
+        .execute();
+    }
   }
 }

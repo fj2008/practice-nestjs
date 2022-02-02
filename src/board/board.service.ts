@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from 'src/model/board.entity';
-import { Comment } from 'src/model/comment.entity';
 import { User } from 'src/model/user.entity';
 import { Connection } from 'typeorm';
 import { BoardRepository } from './board.repository';

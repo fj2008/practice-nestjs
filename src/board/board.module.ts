@@ -3,14 +3,13 @@ import { BoardService } from './board.service';
 import { BoardController } from './board.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BoardRepository } from './board.repository';
-import { JwtStrtegy } from 'src/user/auth/config/jwt.strategy';
-import { PassportModule } from '@nestjs/passport';
-import { UserRepository } from 'src/user/user.repository';
 import { UserModule } from 'src/user/user.module';
+import { Repository } from 'typeorm';
 
 @Module({
   imports: [TypeOrmModule.forFeature([BoardRepository]), UserModule],
-  providers: [BoardService],
+  providers: [BoardService, BoardRepository, Repository],
   controllers: [BoardController],
+  exports: [BoardRepository, Repository],
 })
 export class BoardModule {}

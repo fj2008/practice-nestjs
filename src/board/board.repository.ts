@@ -3,6 +3,9 @@ import { User } from 'src/model/user.entity';
 import {
   EntityManager,
   EntityRepository,
+  getConnection,
+  getManager,
+  getRepository,
   Repository,
   Transaction,
   TransactionManager,
@@ -30,5 +33,18 @@ export class BoardRepository extends Repository<Board> {
     if (board) {
       await transactionManager.save(board);
     }
+  }
+
+  @Transaction()
+  async findByBoardId(boardId: string): Promise<Board> {
+    console.log('나실행됨2?' + boardId);
+    const boardEntity = this.createQueryBuilder()
+      .select('board')
+      .from(Board, 'board')
+      .where('board.id=:id', { id: boardId })
+      .getOne();
+
+    console.log(boardEntity);
+    return boardEntity;
   }
 }
