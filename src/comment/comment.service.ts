@@ -23,12 +23,7 @@ export class CommentService {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    const boardEntity = await getConnection()
-      .createQueryBuilder()
-      .select('board')
-      .from(Board, 'board')
-      .where('board.id=:id', { id: boardId })
-      .getOne();
+    const boardEntity = await this.commentRepository.findByBoard(boardId);
     const comment = await queryRunner.manager.create(Comment, {
       comments: createCommentDto.comment,
       user,
@@ -37,12 +32,7 @@ export class CommentService {
     console.log(comment.comments);
 
     if (comment) {
-      await getConnection()
-        .createQueryBuilder()
-        .insert()
-        .into(Comment)
-        .values(comment)
-        .execute();
+      await this.commentRepository.createComment(comment);
     }
   }
 }
