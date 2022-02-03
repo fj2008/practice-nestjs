@@ -41,7 +41,15 @@ export class UserService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      await this.userRepository.createUser(queryRunner.manager, userAuthDto);
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hash(userAuthDto.password, salt);
+      const user = queryRunner.manager.create(User, {
+        username: userAuthDto.username,
+        password: hashedPassword,
+        gender: userAuthDto.gender,
+        email: userAuthDto.email,
+      });
+      await this.userRepository.createUser(user);
       await queryRunner.commitTransaction(); //성공시에
     } catch (err) {
       await queryRunner.rollbackTransaction();
@@ -54,7 +62,9 @@ export class UserService {
     userSignInAuthDto: UserSignInAuthDto,
   ): Promise<{ accsessToken: string }> {
     const { username, password } = userSignInAuthDto;
-    const user = await this.userRepository.findOne({ username });
+    const user = await this.userRepository.findOne({
+      where: { username: username },
+    });
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload = { username };
       const accsessToken = await this.jwtService.sign(payload); //토큰생성
@@ -115,16 +125,25 @@ export class UserService {
 
   //인증을 마친 유저에게 비밀번호 수정을 해주는 함수
   async updatePw(updatePwDto: UpdatePwDto, userId: string) {
-    const user = await this.userRepository.findOne(userId);
-    const { password } = updatePwDto;
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
-    console.log('바뀐 비밀번호' + hashedPassword);
-
-    if (user) {
-      return await this.userRepository.update(user.id, {
-        password: hashedPassword,
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const userEntity = await this.userRepository.findOne({
+        where: { id: userId },
       });
+      console.log(userEntity);
+      const { password } = updatePwDto;
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hash(password, salt);
+      console.log('바뀐 비밀번호' + hashedPassword);
+
+      await this.userRepository.updatePw(userId, hashedPassword);
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -145,6 +164,6 @@ export class UserService {
   }
 
   deleteUser(userId: string) {
-    this.userRepository.delete(userId);
+    this.userRepository.deleteByUserId(userId);
   }
 }

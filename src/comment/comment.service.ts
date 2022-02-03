@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { BoardRepository } from 'src/board/board.repository';
 import { Board } from 'src/model/board.entity';
 import { Comment } from 'src/model/comment.entity';
 import { User } from 'src/model/user.entity';
@@ -12,6 +13,8 @@ export class CommentService {
   constructor(
     @InjectRepository(CommentRepository)
     private readonly commentRepository: CommentRepository,
+    @InjectRepository(BoardRepository)
+    private readonly boardRepository: BoardRepository,
     private connection: Connection,
   ) {}
 
@@ -23,16 +26,23 @@ export class CommentService {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    const boardEntity = await this.commentRepository.findByBoard(boardId);
-    const comment = await queryRunner.manager.create(Comment, {
-      comments: createCommentDto.comment,
-      user,
-      board: boardEntity,
-    });
-    console.log(comment.comments);
+    try {
+      const boardEntity = await this.commentRepository.findByBoard(boardId);
+      const comment = await queryRunner.manager.create(Comment, {
+        comments: createCommentDto.comment,
+        user,
+        board: boardEntity,
+      });
+      console.log(comment.comments);
 
-    if (comment) {
-      await this.commentRepository.createComment(comment);
+      if (comment) {
+        await this.commentRepository.createComment(comment);
+      }
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
     }
   }
 }

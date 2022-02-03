@@ -8,8 +8,8 @@ import { Repository } from 'typeorm';
 
 @Module({
   imports: [TypeOrmModule.forFeature([BoardRepository]), UserModule],
-  providers: [BoardService, BoardRepository, Repository],
+  providers: [BoardService, BoardRepository],
   controllers: [BoardController],
-  exports: [BoardRepository, Repository],
+  exports: [BoardRepository],
 })
 export class BoardModule {}

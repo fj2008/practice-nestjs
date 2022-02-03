@@ -3,9 +3,6 @@ import { User } from 'src/model/user.entity';
 import {
   EntityManager,
   EntityRepository,
-  getConnection,
-  getManager,
-  getRepository,
   Repository,
   Transaction,
   TransactionManager,
@@ -35,16 +32,15 @@ export class BoardRepository extends Repository<Board> {
     }
   }
 
-  @Transaction()
-  async findByBoardId(boardId: string): Promise<Board> {
-    console.log('나실행됨2?' + boardId);
-    const boardEntity = this.createQueryBuilder()
-      .select('board')
-      .from(Board, 'board')
-      .where('board.id=:id', { id: boardId })
-      .getOne();
-
-    console.log(boardEntity);
-    return boardEntity;
-  }
+  // commentRepository에서는 잘 싱행되는데 여기서는 잘 안된다... 오류도 안뜬다..
+  // async findByBoardId(boardId: string) {
+  //   console.log('나실행됨2?' + boardId);
+  //   const board = await this.createQueryBuilder()
+  //     .select('board')
+  //     .from(Board, 'board')
+  //     .where('board.id=:id', { id: boardId })
+  //     .getOne();
+  //   console.log('나실행됨?' + board.title);
+  //   return board;
+  // }
 }
