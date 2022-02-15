@@ -23,6 +23,8 @@ import { Cache } from 'cache-manager';
 import { createReadStream } from 'fs';
 import { join } from 'path';
 import { Connection, getConnection, getManager } from 'typeorm';
+import { FluentConfig } from 'src/utils/fluentd';
+import { FluentClient } from '@fluent-org/logger';
 @Injectable()
 export class UserService {
   constructor(
@@ -34,8 +36,10 @@ export class UserService {
     private emailService: EmailService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private connection: Connection,
-  ) {}
-
+  ) {
+    this.logger = new FluentConfig().ConfigFlunt();
+  }
+  private logger: FluentClient;
   async signUp(userAuthDto: UserAuthDto): Promise<void> {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
@@ -70,6 +74,8 @@ export class UserService {
       const accsessToken = await this.jwtService.sign(payload); //토큰생성
       return { accsessToken };
     } else {
+      this.logger.emit('error', { date: '이 디자인 패턴은 되는 것이냐?' });
+      // new FluentConfig().serviceConfigFlunt('error', { err: 'err났다.' });
       throw new UnauthorizedException('로그인 실패');
     }
   }

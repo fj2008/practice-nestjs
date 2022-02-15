@@ -12,24 +12,14 @@ import { BoardStatus } from './enum/board.status.enum';
 
 @EntityRepository(Board)
 export class BoardRepository extends Repository<Board> {
-  @Transaction()
-  async createBoard(
-    @TransactionManager() transactionManager: EntityManager,
-    writingBoardDto: WritingBoardDto,
-    user: User,
-  ): Promise<void> {
-    const { title, description } = writingBoardDto;
-    console.log('title: ' + title);
-    const board = transactionManager.create(Board, {
-      title,
-      description,
-      status: BoardStatus.PUBLIC,
-      user: user,
-    });
-    console.log(board.user.id);
-    if (board) {
-      await transactionManager.save(board);
-    }
+  async createBoard(board: Board): Promise<void> {
+    console.log('레파지토리' + board.description);
+    await this.createQueryBuilder()
+      .insert()
+      .into(Board)
+      .values(board)
+      .execute();
+    console.log('저장완료');
   }
 
   // commentRepository에서는 잘 싱행되는데 여기서는 잘 안된다... 오류도 안뜬다..

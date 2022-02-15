@@ -50,6 +50,10 @@ export class UserController {
     return this.userService.signIn(uerSingInAuthDto);
   }
 
+  @Get()
+  test() {
+    return '';
+  }
   //@UseGuards(AuthGuard())
   //validate 메서드에서 return값을 user객체로 줬다. 그래서 요청값아네 user객체가 들어있게하기위해서사용
   //useGuard안에 authguard를 넣으면 요청안에 유저정보를 넣어줄 수 있다.

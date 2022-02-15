@@ -25,8 +25,6 @@ export class BoardController {
     @Body(ValidationPipe) writingBoardDto: WritingBoardDto,
     @GetUser() user: User,
   ): Promise<void> {
-    console.log(writingBoardDto);
-    console.log(user);
     return this.boardService.createBoard(writingBoardDto, user);
   }
 

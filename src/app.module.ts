@@ -1,4 +1,9 @@
-import { forwardRef, Module } from '@nestjs/common';
+import {
+  forwardRef,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+} from '@nestjs/common';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './config/typeorm.config';
@@ -11,6 +16,7 @@ import configEmail from './config/email';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { BoardModule } from './board/board.module';
 import { CommentModule } from './comment/comment.module';
+import { LoggerMiddleware } from './app.middleware';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -43,4 +49,8 @@ import { CommentModule } from './comment/comment.module';
   ],
   providers: [EmailService, EjsAdapter],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}

@@ -5,6 +5,7 @@ import { User } from 'src/model/user.entity';
 import { Connection } from 'typeorm';
 import { BoardRepository } from './board.repository';
 import { WritingBoardDto } from './dto/writing.board.dto';
+import { BoardStatus } from './enum/board.status.enum';
 
 @Injectable()
 export class BoardService {
@@ -22,12 +23,26 @@ export class BoardService {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    await this.boardRepository.createBoard(
-      queryRunner.manager,
-      writingBoardDto,
-      user,
-    );
-    console.log('testDi' + test);
+    try {
+      console.log('실행됨?!1');
+      const board = queryRunner.manager.create(Board, {
+        title: writingBoardDto.title,
+        description: writingBoardDto.description,
+        status: BoardStatus.PUBLIC,
+        user: user,
+      });
+      if (board) {
+        console.log('나실행됨?' + board.description);
+        await this.boardRepository.createBoard(board);
+        await queryRunner.commitTransaction();
+      } else {
+        console.log('게시글추가 실패');
+      }
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   //하나의 글 수정api에 대한 서비스
