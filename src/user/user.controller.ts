@@ -21,6 +21,7 @@ import { Request, response } from 'express';
 import { createReadStream } from 'fs';
 import { join } from 'path';
 import { EmailService } from 'src/email/email.service';
+import { TestInterface } from 'src/interface/fluent';
 import { User } from 'src/model/user.entity';
 import { GetUser } from './decorator/get-user.decorator';
 import { EmailDto } from './dto/emaildto';

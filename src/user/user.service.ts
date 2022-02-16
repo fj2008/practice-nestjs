@@ -74,7 +74,9 @@ export class UserService {
       const accsessToken = await this.jwtService.sign(payload); //토큰생성
       return { accsessToken };
     } else {
-      this.logger.emit('error', { date: '이 디자인 패턴은 되는 것이냐?' });
+      this.logger.emit('error', {
+        date: '이 플루언트 쨩쨩패턴은 ec2에서도 되는 것이냐?',
+      });
       // new FluentConfig().serviceConfigFlunt('error', { err: 'err났다.' });
       throw new UnauthorizedException('로그인 실패');
     }
