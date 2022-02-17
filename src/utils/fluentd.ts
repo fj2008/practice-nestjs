@@ -5,7 +5,7 @@ export class FluentConfig {
   serviceConfigFlunt(tag: string, log: EventRecord) {
     const logger = new FluentClient('api', {
       socket: {
-        host: '54.180.87.126',
+        host: '3.35.3.103',
         port: 24224,
       },
     });
@@ -17,7 +17,7 @@ export class FluentConfig {
     const tag: TestInterface = { api: 'api' };
     const logger = new FluentClient(tag.api, {
       socket: {
-        host: '54.180.87.126',
+        host: '3.35.3.103',
         port: 24224,
       },
     });
@@ -30,7 +30,7 @@ export class FluentConfig {
   hostConfigFlunt(tag: string, log: EventRecord) {
     const logger = new FluentClient('host', {
       socket: {
-        host: '54.180.87.126',
+        host: '3.35.3.103',
         port: 24224,
       },
     });

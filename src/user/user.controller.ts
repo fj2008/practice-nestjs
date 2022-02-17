@@ -51,8 +51,12 @@ export class UserController {
     return this.userService.signIn(uerSingInAuthDto);
   }
 
+  @Get(':id')
+  test(@Param('id') id: string) {
+    return '';
+  }
   @Get()
-  test() {
+  test22() {
     return '';
   }
   //@UseGuards(AuthGuard())
