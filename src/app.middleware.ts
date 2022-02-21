@@ -59,7 +59,6 @@ export class LoggerMiddleware implements NestMiddleware {
           );
         }
       } else {
-        res.status(203).json({ state: 'ERROR', msg: '접근 권한 없음' });
         next();
       }
     } catch (err: any) {
